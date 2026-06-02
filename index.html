@@ -790,6 +790,9 @@
 
 <!-- MUSIC BUTTON -->
 <button id="music-btn" title="Toggle music">♪</button>
+<audio id="bgMusic" autoplay loop >
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
 
 <!-- ════════════════════════════════
      HERO
@@ -1061,12 +1064,40 @@ revealEls.forEach(el => observer.observe(el));
 
 /* ── MUSIC BUTTON (visual toggle only – no audio src needed) ── */
 const musicBtn = document.getElementById('music-btn');
-let playing = false;
-musicBtn.addEventListener('click', () => {
-  playing = !playing;
-  musicBtn.classList.toggle('playing', playing);
-  musicBtn.textContent = playing ? '♫' : '♪';
-});
+const audio = document.getElementById('bgMusic');
+  let playing = false;
+
+  // Try to load Din Shagna Da from a public source
+  // User can replace this src with actual file
+  // audio.src = 'song.'; // placeholder
+  
+  musicBtn.addEventListener('click', () => {
+    if (playing) {
+      audio.pause();
+      musicBtn.textContent = '♪';
+      musicBtn.classList.remove('playing');
+      playing = false;
+    } else {
+      audio.play().then(() => {
+        musicBtn.textContent = '■';
+        musicBtn.classList.add('playing');
+        playing = true;
+      }).catch(() => {
+        musicBtn.textContent = '♪';
+      });
+    }
+  });
+
+  // Auto-play on first interaction
+  document.addEventListener('click', () => {
+    if (!playing && audio.paused) {
+      audio.play().then(() => {
+        musicBtn.textContent = '■';
+        musicBtn.classList.add('playing');
+        playing = true;
+      }).catch(() => {});
+    }
+  }, { once: true });
 </script>
 </body>
 </html>
